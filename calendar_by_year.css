@@ -1,0 +1,60 @@
+#calendar p {
+  font-size: 48pt;
+  text-align: center;
+}
+
+table {
+  font-family: Verdana, sans-serif;
+  font-weight: normal;
+  font-size: 14pt;
+  padding-left: 1em;
+  padding-bottom: 1em;
+  float: left;
+  text-align: center;
+}
+
+tbody td:first-child, tbody td:last-child {
+  background: #F5F5F5;
+}
+
+th, td {
+  padding: 1px;
+}
+
+thead {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+#may, #september {
+  clear: both;
+}
+
+#calendar p:hover, td.day:hover, th.month_name:hover {
+  background: gray !important;
+  color: white !important;
+}
+
+th.month_name {
+  text-align: left;
+}
+
+th.month_name.current {
+  color: #CB6C6B;
+  border-bottom: 2px #CB6C6B solid;
+  padding-bottom: 0px;
+}
+
+th.current {
+  color: #CB6C6B;
+}
+
+td.current {
+  background-color: #CB6C6B;
+  color: white;
+}
+
+td.selected {
+  background-color: #ADCEF3 !important;
+  color: black !important;
+}
