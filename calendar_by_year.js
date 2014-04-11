@@ -148,6 +148,11 @@ function selectMonth(monthID) {
   } else {
     $(month_days).addClass(SELECTED);
     $(month_id).addClass(SELECTED);
+
+    // Find the first day and last day of this month
+    // and insert SELSTART/SELEND classes
+    $($(month_id+' .day').first()).addClass(SELSTART);
+    $($(month_id+' .day').last()).addClass(SELEND);
   }
 }
 
