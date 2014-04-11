@@ -1,5 +1,13 @@
 /*jslint indent: 2, maxlen: 80 */
 
+// TODO
+// - Get rid of the month classes in html; let this code generate
+//   the months
+//
+// - Write tests
+//
+// - Refactor the code; clean it up
+
 $(function() {
   console.log("ready!");
   build_calendar_by_year(2014);
@@ -20,6 +28,10 @@ $(function() {
 const SELECTED = 'selected';
 const SELSTART = 'select-start';
 const SELEND   = 'select-end';
+const MONTHS   = ['january', 'february', 'march', 'april',
+                  'may', 'june', 'july', 'august',
+                  'september', 'october', 'november', 'december'];
+const DAYNAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function resetSelection() {
   $('.selected').removeClass(SELECTED);
@@ -38,10 +50,6 @@ function range(low, high) {
 }
 
 function build_calendar_by_year(year) {
-  var months = ['january', 'february', 'march', 'april',
-                'may', 'june', 'july', 'august',
-                'september', 'october', 'november', 'december'];
-
   var populateWeek = function(startDate, startDay, numOfDays) {
     var weekDays = [0, 0, 0, 0, 0, 0, 0]; // Exactly 7 elements
     var nextDate = -1;
@@ -59,7 +67,6 @@ function build_calendar_by_year(year) {
   };
 
   var populateWeekDayNames = function(monthID) {
-    var weekNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var tableID   = '#' + monthID;
 
     $(tableID).append('<thead />');
@@ -74,12 +81,12 @@ function build_calendar_by_year(year) {
     var tableHeaderRow = $(tableHeader).find('tr')[1];
 
     for(i = 0; i < 7; i++) {
-      $(tableHeaderRow).append('<th>'+weekNames[i]+'</th>');
+      $(tableHeaderRow).append('<th>'+DAYNAMES[i]+'</th>');
     }
   };
 
-  var populateWeekRow = function(year, month) {
-    var monthID   = months[month];
+  var populateMonth = function(year, month) {
+    var monthID   = MONTHS[month];
     var firstDay  = new Date(year, month, 1).getDay(); // 0-6 => Sun-Sat
     var week      = [];
     var nextDate  = 1;
@@ -121,7 +128,7 @@ function build_calendar_by_year(year) {
   $('#year').text('' + year);
 
   for(var month = 0; month < 12; month++) {
-    populateWeekRow(year, month);
+    populateMonth(year, month);
   }
 }
 
@@ -133,12 +140,12 @@ function selectMonth(monthID) {
   var month_id = '#' + monthID;
   var month_days = month_id + ' td.day';
 
+  resetSelection();
+
   if($(month_id).hasClass(SELECTED)) {
-    resetSelection();
     $(month_days).removeClass(SELECTED);
     $(month_id).removeClass(SELECTED);
   } else {
-    resetSelection();
     $(month_days).addClass(SELECTED);
     $(month_id).addClass(SELECTED);
   }
@@ -146,13 +153,10 @@ function selectMonth(monthID) {
 
 function getDateAtPosition(classOrThat) {
   var month, monthNumber, dayNumber, dateValue;
-  var months = ['january', 'february', 'march', 'april',
-                'may', 'june', 'july', 'august',
-                'september', 'october', 'november', 'december'];
 
   try {
     month = $(classOrThat).parents('table')[0].id;
-    monthNumber = months.indexOf(month);
+    monthNumber = MONTHS.indexOf(month);
     dayNumber = $(classOrThat)[0].innerText;
 
     dateValue = (parseInt(monthNumber) * 100) + (parseInt(dayNumber));
