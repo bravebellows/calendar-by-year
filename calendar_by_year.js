@@ -39,6 +39,10 @@ function resetSelection() {
   $('.select-end').removeClass(SELEND);
 }
 
+function resetSelectedDays() {
+  $('.day.selected').removeClass(SELECTED);
+}
+
 function range(low, high) {
   var rangeArray = new Array;
 
@@ -139,10 +143,11 @@ function toggleSelected(that) {
 function selectMonth(monthID) {
   var month_id = '#' + monthID;
   var month_days = month_id + ' td.day';
+  var monthSelected = $(month_id).hasClass(SELECTED);
 
   resetSelection();
 
-  if($(month_id).hasClass(SELECTED)) {
+  if(monthSelected) {
     $(month_days).removeClass(SELECTED);
     $(month_id).removeClass(SELECTED);
   } else {
@@ -175,21 +180,30 @@ function getDateAtSelectStart() {
   return getDateAtPosition('.select-start');
 }
 
+function getDateAtSelectEnd() {
+  return getDateAtPosition('.select-end');
+}
+
 function getDateAtClick(that) {
   return getDateAtPosition(that);
 }
 
 function day_clicked(that) {
   var movedSelectStart = false;
+  var movedSelectEnd   = false;
   var startDate = getDateAtSelectStart();
-  var endDate = getDateAtClick(that);
+  var endDate   = getDateAtSelectEnd();
+  var thatDate  = getDateAtClick(that);
 
-  if(endDate < startDate) {
+  if(thatDate < startDate) {
     // User selected an earlier date than the initial start date
     // Move it back
     $('.select-start').removeClass(SELSTART);
     $(that).addClass(SELSTART);
     movedSelectStart = true;
+  } else if(thatDate < endDate) {
+    // The user selected inside a selected range
+    movedSelectEnd = true;
   }
 
   // if select-start is missing, clear all selection
@@ -213,6 +227,8 @@ function day_clicked(that) {
       $('.day.select-end').removeClass(SELEND);
       $(that).addClass(SELEND);
     }
+
+    resetSelectedDays();
 
     for(var i = 0; i < len; i++) {
       if($(days[i]).hasClass(SELSTART)) {
