@@ -1,4 +1,4 @@
-#calendar p {
+#year-calendar p {
   font-size: 48pt;
   text-align: center;
 }
@@ -30,7 +30,7 @@ thead {
   clear: both;
 }
 
-#calendar p:hover, td.day:hover, th.month_name:hover {
+#year-calendar p:hover, td.day:hover, th.month_name:hover {
   background: gray !important;
   color: white !important;
 }

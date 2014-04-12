@@ -128,6 +128,14 @@ function build_calendar_by_year(year) {
     }
   };
 
+  // Layout the calendar tables
+  var calendarYear = $('#year-calendar');
+  $(calendarYear).append('<p id="year" />');
+
+  for(var month = 0; month < MONTHS.length; month++) {
+    $(calendarYear).append('<table id="'+MONTHS[month]+'" />');
+  }
+
   // Update the year
   $('#year').text('' + year);
 
@@ -256,11 +264,12 @@ function month_clicked(that) {
 }
 
 function year_clicked() {
-  var calendarSelected = $('#calendar').hasClass(SELECTED);
+  var yearCalID = '#year-calendar';
+  var calendarSelected = $(yearCalID).hasClass(SELECTED);
 
   resetSelection();
   if(!calendarSelected) {
-    $('#calendar .day').addClass(SELECTED);
-    $('#calendar').addClass(SELECTED);
+    $(yearCalID+' .day').addClass(SELECTED);
+    $(yearCalID).addClass(SELECTED);
   }
 }
