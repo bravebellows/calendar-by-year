@@ -137,7 +137,6 @@ function build_calendar_by_year(year) {
       return $(tableBody).find('tr:last');
     });
 
-    tableRow = createTableRow();
     for (var i = 0; i < monthArray.length; i++) {
       if (i % 7 == 0) {
         tableRow = createTableRow();
