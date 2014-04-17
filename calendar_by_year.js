@@ -66,12 +66,12 @@ function build_calendar_by_year(year) {
     return { weekdays: weekDays, daynumber: dayNumber };
   };
 
-  var populateWeekDayNames = function (monthID) {
+  var populateWeekDayNames = function(monthID) {
     var tableID   = '#' + monthID;
 
     $(tableID).append('<thead />');
 
-    var tableHeader = $(tableID).find('thead')[0];
+    var tableHeader = $(tableID).find('thead').first();
 
     $(tableHeader).append('<tr>');
     var tableHeaderRow = $(tableHeader).find('tr');
@@ -85,43 +85,69 @@ function build_calendar_by_year(year) {
     });
   };
 
-  var populateMonth = function (year, month) {
-    var monthID   = MONTHS[month];
-    var firstDay  = new Date(year, month, 1).getDay(); // 0-6 => Sun-Sat
-    var week      = [];
-    var nextDate  = 1;
-    var monthDays = new Date(year, month+1, 0).getDate(); // # of days in month
-    var rowOffset = 0;
-    var tableID   = '#' + monthID;
+  var populateMonth = function (year, month) { // Month range: 0-11
+    var buildWeek = function() {
+      return [0, 0, 0, 0, 0, 0, 0];
+    };
+    var fillWeek = function(startDate) {
+      startDate = startDate || 0;
+      while(startDate < 7) {
+        week[startDate] = monthDate;
+        monthDate++;
+        startDate++;
+
+        if (monthDate > daysInMonth) {
+          break;
+        }
+      }
+    };
+    var monthArray = [];
+    var monthDate = 1;
+    var daysInWeek;
+
+    // Get the number of days for the month
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Find which day the first day of the month falls on
+    var firstDay = new Date(year, month, 1).getDay();
+
+    // Create first row of the week, based on the first day
+    var week = buildWeek();
+    fillWeek(firstDay);
+    monthArray = week;
+
+    // thereafter, fill the days until the end of the month
+    while(monthDate <= daysInMonth) {
+      week = buildWeek();
+      fillWeek();
+      monthArray = monthArray.concat(week);
+    }
+
+    // Now display the month in HTML
+    var tableBody;
+    var monthID = MONTHS[month];
+    var tableID = '#' + monthID;
+    var createTableRow;
 
     populateWeekDayNames(monthID);
-
     $(tableID).append('<tbody />');
-    var tableBody = $(tableID).find('tbody')[0];
-
-    var weekInfo, tableBodyRow;
-    while (monthDays > 0) {
-      weekInfo  = populateWeek(nextDate, firstDay, monthDays); // first week of the month
+    tableBody = $(tableID).find('tbody').first();
+    createTableRow = (function() {
       $(tableBody).append('<tr>');
-      tableBodyRow = $(tableBody).find('tr:last');
+      return $(tableBody).find('tr:last');
+    });
 
-      weekInfo.weekdays.forEach(function (weekday) {
-        var dayText = '';
-        var dayDate = weekday;
-        var dayClass = '';
+    tableRow = createTableRow();
+    for (var i = 0; i < monthArray.length; i++) {
+      if (i % 7 == 0) {
+        tableRow = createTableRow();
+      }
 
-        if (dayDate > 0) {
-          dayText = weekday;
-          dayClass = 'day';
-        }
-
-        $(tableBodyRow).append('<td class="' + dayClass + '">' + dayText + '</td>');
-      });
-
-      // Generate data for the next week
-      nextDate   = weekInfo.daynumber;
-      monthDays -= 7 - firstDay;
-      firstDay   = 0;
+      if (monthArray[i] > 0) {
+        $(tableRow).append('<td class="day">' + monthArray[i] + '</td>');
+      } else {
+        $(tableRow).append('<td />');
+      }
     }
   };
 
