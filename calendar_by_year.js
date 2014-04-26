@@ -1,24 +1,24 @@
 /*jslint indent: 2, maxlen: 80 */
 
 // TODO
-// - Write tests
-//
 // - Refactor the code; clean it up
+// - use underscores for variables
+// - use camelCase for functions
 
 $(function () {
   console.log("ready!");
-  build_calendar_by_year(2014);
+  buildYearCalendar(2014);
 
   $('#year').click(function () {
-    year_clicked(this);
+    yearClicked(this);
   });
 
   $('.month_name').click(function () {
-    month_clicked(this);
+    monthClicked(this);
   });
 
   $('.day').click(function () {
-    day_clicked(this);
+    dayClicked(this);
   });
 });
 
@@ -41,47 +41,47 @@ function resetSelectedDays() {
 }
 
 function range(low, high) {
-  var i, rangeArray = [];
+  var i, range_array = [];
 
   for (i = low; i <= high; i++) {
-    rangeArray.push(i);
+    range_array.push(i);
   }
 
-  return rangeArray;
+  return range_array;
 }
 
-function build_calendar_by_year(year) {
-  var populateWeek = function (startDate, startDay, numOfDays) {
-    var i, dayNumber, weekDays = [0, 0, 0, 0, 0, 0, 0]; // Exactly 7 elements
+function buildYearCalendar(year) {
+  var populateWeek = function (start_date, start_day, num_of_days) {
+    var i, day_number, week_days = [0, 0, 0, 0, 0, 0, 0]; // Exactly 7 elements
 
-    if (numOfDays > 7) {
-      numOfDays = 7;
+    if (num_of_days > 7) {
+      num_of_days = 7;
     }
 
     // TODO Clean this up; this is hard to read!
-    for (i = startDay, dayNumber = startDate; i < numOfDays; i++, dayNumber++) {
-      weekDays[i] = dayNumber;
+    for (i = start_day, day_number = start_date; i < num_of_days; i++, day_number++) {
+      week_days[i] = day_number;
     }
 
-    return { weekdays: weekDays, daynumber: dayNumber };
+    return { weekdays: week_days, daynumber: day_number };
   };
 
-  var populateWeekDayNames = function(monthID) {
-    var tableID   = '#' + monthID;
+  var populateWeekDayNames = function(month_id) {
+    var table_id = '#' + month_id;
 
-    $(tableID).append('<thead />');
+    $(table_id).append('<thead />');
 
-    var tableHeader = $(tableID).find('thead').first();
+    var table_header = $(table_id).find('thead').first();
 
-    $(tableHeader).append('<tr>');
-    var tableHeaderRow = $(tableHeader).find('tr');
-    $(tableHeaderRow).append('<th class="month_name" colspan="7">' + monthID + '</th>');
+    $(table_header).append('<tr>');
+    var table_header_row = $(table_header).find('tr');
+    $(table_header_row).append('<th class="month_name" colspan="7">' + month_id + '</th>');
 
-    $(tableHeader).append('<tr>');
-    var tableHeaderRow = $(tableHeader).find('tr')[1];
+    $(table_header).append('<tr>');
+    var table_header_row = $(table_header).find('tr')[1];
 
     DAYNAMES.forEach(function (dayname) {
-      $(tableHeaderRow).append('<th>' + dayname + '</th>');
+      $(table_header_row).append('<th>' + dayname + '</th>');
     });
   };
 
@@ -89,73 +89,71 @@ function build_calendar_by_year(year) {
     var buildWeek = function() {
       return [0, 0, 0, 0, 0, 0, 0];
     };
-    var fillWeek = function(startDate) {
-      startDate = startDate || 0;
-      while(startDate < 7) {
-        week[startDate] = monthDate;
-        monthDate++;
-        startDate++;
+    var fillWeek = function(start_date) {
+      start_date = start_date || 0;
+      while(start_date < 7) {
+        week[start_date] = month_date;
+        month_date++;
+        start_date++;
 
-        if (monthDate > daysInMonth) {
+        if (month_date > days_in_month) {
           break;
         }
       }
     };
-    var monthArray = [];
-    var monthDate = 1;
-    var daysInWeek;
+    var month_array = [];
+    var month_date = 1;
+    var days_in_week;
 
     // Get the number of days for the month
-    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var days_in_month = new Date(year, month + 1, 0).getDate();
 
     // Find which day the first day of the month falls on
-    var firstDay = new Date(year, month, 1).getDay();
+    var first_day = new Date(year, month, 1).getDay();
 
     // Create first row of the week, based on the first day
     var week = buildWeek();
-    fillWeek(firstDay);
-    monthArray = week;
+    fillWeek(first_day);
+    month_array = week;
 
     // thereafter, fill the days until the end of the month
-    while(monthDate <= daysInMonth) {
+    while(month_date <= days_in_month) {
       week = buildWeek();
       fillWeek();
-      monthArray = monthArray.concat(week);
+      month_array = month_array.concat(week);
     }
 
     // Now display the month in HTML
-    var tableBody;
-    var monthID = MONTHS[month];
-    var tableID = '#' + monthID;
-    var createTableRow;
+    var month_id = MONTHS[month];
+    var table_id = '#' + month_id;
 
-    populateWeekDayNames(monthID);
-    $(tableID).append('<tbody />');
-    tableBody = $(tableID).find('tbody').first();
-    createTableRow = (function() {
-      $(tableBody).append('<tr>');
-      return $(tableBody).find('tr:last');
+    populateWeekDayNames(month_id);
+    $(table_id).append('<tbody />');
+    var table_body = $(table_id).find('tbody').first();
+    var createTableRow = (function() {
+      $(table_body).append('<tr>');
+      return $(table_body).find('tr:last');
     });
 
-    for (var i = 0; i < monthArray.length; i++) {
+    for (var i = 0; i < month_array.length; i++) {
       if (i % 7 == 0) {
-        tableRow = createTableRow();
+        table_row = createTableRow();
       }
 
-      if (monthArray[i] > 0) {
-        $(tableRow).append('<td class="day">' + monthArray[i] + '</td>');
+      if (month_array[i] > 0) {
+        $(table_row).append('<td class="day">' + month_array[i] + '</td>');
       } else {
-        $(tableRow).append('<td />');
+        $(table_row).append('<td />');
       }
     }
   };
 
   // Layout the calendar tables
-  var calendarYear = $('#year-calendar');
-  $(calendarYear).append('<p id="year" />');
+  var calendar_year = $('#year-calendar');
+  $(calendar_year).append('<p id="year" />');
 
   MONTHS.forEach(function (month) {
-    $(calendarYear).append('<table id="' + month + '" />');
+    $(calendar_year).append('<table id="' + month + '" />');
   });
 
   // Update the year
@@ -170,14 +168,14 @@ function toggleSelected(that) {
   $(that).toggleClass(SELECTED);
 }
 
-function selectMonth(monthID) {
-  var month_id = '#' + monthID;
+function selectMonth(month_id) {
+  var month_id = '#' + month_id;
   var month_days = month_id + ' td.day';
-  var monthSelected = $(month_id).hasClass(SELECTED);
+  var month_selected = $(month_id).hasClass(SELECTED);
 
   resetSelection();
 
-  if (monthSelected) {
+  if (month_selected) {
     $(month_days).removeClass(SELECTED);
     $(month_id).removeClass(SELECTED);
   } else {
@@ -191,16 +189,16 @@ function selectMonth(monthID) {
   }
 }
 
-function getDateAtPosition(classOrThat) {
-  var month, monthNumber, dayNumber, dateValue;
+function getDateAtPosition(class_or_that) {
+  var month, month_number, day_number, date_value;
 
   try {
-    month = $(classOrThat).parents('table')[0].id;
-    monthNumber = MONTHS.indexOf(month);
-    dayNumber = $(classOrThat)[0].innerText;
+    month = $(class_or_that).parents('table')[0].id;
+    month_number = MONTHS.indexOf(month);
+    day_number = $(class_or_that)[0].innerText;
 
-    dateValue = (parseInt(monthNumber) * 100) + (parseInt(dayNumber));
-    return dateValue;
+    date_value = (parseInt(month_number) * 100) + (parseInt(day_number));
+    return date_value;
   } catch(e) {
     return;
   }
@@ -218,22 +216,22 @@ function getDateAtClick(that) {
   return getDateAtPosition(that);
 }
 
-function day_clicked(that) {
-  var movedSelectStart = false;
-  var movedSelectEnd   = false;
-  var startDate = getDateAtSelectStart();
-  var endDate   = getDateAtSelectEnd();
-  var thatDate  = getDateAtClick(that);
+function dayClicked(that) {
+  var moved_select_start = false;
+  var moved_select_end   = false;
+  var start_date = getDateAtSelectStart();
+  var end_date   = getDateAtSelectEnd();
+  var that_date  = getDateAtClick(that);
 
-  if (thatDate < startDate) {
+  if (that_date < start_date) {
     // User selected an earlier date than the initial start date
     // Move it back
     $('.select-start').removeClass(SELSTART);
     $(that).addClass(SELSTART);
-    movedSelectStart = true;
-  } else if (thatDate < endDate) {
+    moved_select_start = true;
+  } else if (that_date < end_date) {
     // The user selected inside a selected range
-    movedSelectEnd = true;
+    moved_select_end = true;
   }
 
   // if select-start is missing, clear all selection
@@ -250,9 +248,9 @@ function day_clicked(that) {
   // Check if there are more than one .selected
   if ($('.day.selected').length > 1) {
     var days = $('.day');
-    var selectToggle = false;
+    var select_toggle = false;
 
-    if (!movedSelectStart) {
+    if (!moved_select_start) {
       $('.day.select-end').removeClass(SELEND);
       $(that).addClass(SELEND);
     }
@@ -261,36 +259,36 @@ function day_clicked(that) {
 
     days.each(function (index, day) {
       if ($(day).hasClass(SELSTART)) {
-          selectToggle = true;
+          select_toggle = true;
       }
       if ($(day).hasClass(SELEND)) {
         $(day).addClass(SELECTED);
-        selectToggle = false;
+        select_toggle = false;
         return; // stop processing loop
       }
 
-      if (selectToggle) {
+      if (select_toggle) {
         $(day).addClass(SELECTED);
       }
     });
   }
 }
 
-function get_month_id(that) {
+function getMonthId(that) {
   return $(that).parents('table')[0].id;
 }
 
-function month_clicked(that) {
-  selectMonth(get_month_id(that), resetSelection);
+function monthClicked(that) {
+  selectMonth(getMonthId(that), resetSelection);
 }
 
-function year_clicked() {
-  var yearCalID = '#year-calendar';
-  var calendarSelected = $(yearCalID).hasClass(SELECTED);
+function yearClicked() {
+  var year_cal_id = '#year-calendar';
+  var calendar_selected = $(year_cal_id).hasClass(SELECTED);
 
   resetSelection();
-  if (!calendarSelected) {
-    $(yearCalID + ' .day').addClass(SELECTED);
-    $(yearCalID).addClass(SELECTED);
+  if (!calendar_selected) {
+    $(year_cal_id + ' .day').addClass(SELECTED);
+    $(year_cal_id).addClass(SELECTED);
   }
 }
