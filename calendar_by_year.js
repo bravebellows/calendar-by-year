@@ -2,8 +2,6 @@
 
 // TODO
 // - Refactor the code; clean it up
-// - use underscores for variables
-// - use camelCase for functions
 
 $(function () {
   console.log("ready!");
@@ -85,6 +83,20 @@ function buildYearCalendar(year) {
     });
   };
 
+  var stringifyDate = function (date) {
+    function zeroPad(n) {
+      return (n < 10 ? '0' : '') + n;
+    }
+    function stringize(year, month, date) {
+      return         year   + '-' +
+             zeroPad(month) + '-' +
+             zeroPad(date);
+    }
+    return stringize(date.getFullYear(),
+                     date.getMonth() + 1,
+                     date.getDate());
+  };
+
   var populateMonth = function (year, month) { // Month range: 0-11
     var buildWeek = function() {
       return [0, 0, 0, 0, 0, 0, 0];
@@ -142,9 +154,8 @@ function buildYearCalendar(year) {
       }
 
       if (month_array[i] > 0) {
-        var month_date = parseInt(month_array[i]) - 1;
-        var date_in_ms = date_value.getTime() + (month_date * 86400000);
-        $(table_row).append('<td class="day" data-yc-value="' + date_in_ms + '">' + month_array[i] + '</td>');
+        var string_date = stringifyDate(new Date(year, month, month_array[i]));
+        $(table_row).append('<td class="day" data-yc-value="' + string_date + '">' + month_array[i] + '</td>');
       } else {
         $(table_row).append('<td />');
       }
@@ -165,6 +176,8 @@ function buildYearCalendar(year) {
   for (var month = 0; month < 12; month++) {
     populateMonth(year, month);
   }
+
+  updateSelectedDates();
 }
 
 function toggleSelected(that) {
@@ -264,6 +277,8 @@ function dayClicked(that) {
       }
     });
   }
+
+  updateSelectedDates();
 }
 
 function getMonthId(that) {
@@ -272,6 +287,7 @@ function getMonthId(that) {
 
 function monthClicked(that) {
   selectMonth(getMonthId(that), resetSelection);
+  updateSelectedDates();
 }
 
 function yearClicked() {
@@ -282,5 +298,26 @@ function yearClicked() {
   if (!calendar_selected) {
     $(year_cal_id + ' .day').addClass(SELECTED);
     $(year_cal_id).addClass(SELECTED);
+
+    $(year_cal_id + ' .day:first').addClass(SELSTART);
+    $(year_cal_id + ' .day:last').addClass(SELEND);
   }
+
+  updateSelectedDates();
+}
+
+function updateSelectedDates() {
+  var start_date = getDateAtSelectStart();
+  var end_date   = getDateAtSelectEnd();
+  var date_text  = 'Select a date, month or year';
+
+  if (start_date) {
+    if (!end_date) {
+      date_text = 'Selected Date: ' + start_date;
+    } else {
+      date_text = 'Selected Dates: ' + start_date + ' to ' + end_date;
+    }
+  }
+
+  $('#date-range').text(date_text);
 }

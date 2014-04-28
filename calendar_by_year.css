@@ -1,16 +1,22 @@
 #year-calendar p {
-  font-size: 48pt;
+  font-size: 24pt;
+  text-align: center;
+}
+
+#date-range {
+  font-size: 12pt;
   text-align: center;
 }
 
 table {
   font-family: Verdana, sans-serif;
   font-weight: normal;
-  font-size: 14pt;
+  font-size: 10pt;
   padding-left: 1em;
   padding-bottom: 1em;
   float: left;
   text-align: center;
+  height: 15em;
 }
 
 tbody td:first-child, tbody td:last-child {
@@ -24,10 +30,6 @@ th, td {
 thead {
   font-weight: bold;
   text-transform: capitalize;
-}
-
-#may, #september {
-  clear: both;
 }
 
 #year-calendar p:hover, td.day:hover, th.month_name:hover {
