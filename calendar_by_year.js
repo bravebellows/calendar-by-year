@@ -109,7 +109,8 @@ function buildYearCalendar(year) {
     var days_in_month = new Date(year, month + 1, 0).getDate();
 
     // Find which day the first day of the month falls on
-    var first_day = new Date(year, month, 1).getDay();
+    var date_value = new Date(year, month, 1);
+    var first_day = date_value.getDay();
 
     // Create first row of the week, based on the first day
     var week = buildWeek();
@@ -141,7 +142,9 @@ function buildYearCalendar(year) {
       }
 
       if (month_array[i] > 0) {
-        $(table_row).append('<td class="day">' + month_array[i] + '</td>');
+        var month_date = parseInt(month_array[i]) - 1;
+        var date_in_ms = date_value.getTime() + (month_date * 86400000);
+        $(table_row).append('<td class="day" data-yc-value="' + date_in_ms + '">' + month_array[i] + '</td>');
       } else {
         $(table_row).append('<td />');
       }
@@ -189,19 +192,8 @@ function selectMonth(month_id) {
   }
 }
 
-function getDateAtPosition(class_or_that) {
-  var month, month_number, day_number, date_value;
-
-  try {
-    month = $(class_or_that).parents('table')[0].id;
-    month_number = MONTHS.indexOf(month);
-    day_number = $(class_or_that)[0].innerText;
-
-    date_value = (parseInt(month_number) * 100) + (parseInt(day_number));
-    return date_value;
-  } catch(e) {
-    return;
-  }
+function getDateAtPosition(that) {
+  return $(that).data('yc-value');
 }
 
 function getDateAtSelectStart() {
