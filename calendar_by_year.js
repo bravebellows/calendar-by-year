@@ -5,19 +5,7 @@
 
 $(function () {
   console.log("ready!");
-  buildYearCalendar(2014);
-
-  $('#year').click(function () {
-    yearClicked(this);
-  });
-
-  $('.month_name').click(function () {
-    monthClicked(this);
-  });
-
-  $('.day').click(function () {
-    dayClicked(this);
-  });
+  buildYearCalendar(new Date().getFullYear());
 });
 
 var SELECTED = 'selected';
@@ -162,22 +150,58 @@ function buildYearCalendar(year) {
     }
   };
 
+  var setupTriggers = function() {
+    $('#year ul li').click(function () {
+      yearClicked(this);
+    });
+
+    $('.month_name').click(function () {
+      monthClicked(this);
+    });
+
+    $('.day').click(function () {
+      dayClicked(this);
+    });
+  };
+
+  // Remove the old year calendar; wipe the slade clean
+  $('#year-calendar').hide();
+  $('#year-calendar').empty();
+  resetSelection();
+
   // Layout the calendar tables
+  // Put up the year menu
+  var year_div = document.createElement('div');
+  year_div.id = 'year';
   var calendar_year = $('#year-calendar');
-  $(calendar_year).append('<p id="year" />');
+  var year_menu = document.createElement('ul');
+  $(year_div).append(year_menu);
+  $(calendar_year).append(year_div);
+
+  for (i = year - 1; i <= year + 1; i++) {
+    var item_list = document.createElement('li');
+    var year_text = document.createTextNode(i);
+    item_list.appendChild(year_text);
+
+    if (i == year) {
+      $(item_list).addClass('selected-year');
+    }
+
+    $(item_list).data('yc-year', i);
+    $(year_menu).append(item_list);
+  }
 
   MONTHS.forEach(function (month) {
     $(calendar_year).append('<table id="' + month + '" />');
   });
-
-  // Update the year
-  $('#year').text('' + year);
 
   for (var month = 0; month < 12; month++) {
     populateMonth(year, month);
   }
 
   updateSelectedDates();
+  setupTriggers();
+  $('#year-calendar').slideDown(250);
 }
 
 function toggleSelected(that) {
@@ -290,17 +314,27 @@ function monthClicked(that) {
   updateSelectedDates();
 }
 
-function yearClicked() {
-  var year_cal_id = '#year-calendar';
-  var calendar_selected = $(year_cal_id).hasClass(SELECTED);
+function yearClicked(that) {
+  // See if the current year is selected
+  var is_year_current = $(that).hasClass('selected-year');
 
-  resetSelection();
-  if (!calendar_selected) {
-    $(year_cal_id + ' .day').addClass(SELECTED);
-    $(year_cal_id).addClass(SELECTED);
+  if (is_year_current) {
+    var year_cal_id = '#year-calendar';
+    var calendar_selected = $(year_cal_id).hasClass(SELECTED);
 
-    $(year_cal_id + ' .day:first').addClass(SELSTART);
-    $(year_cal_id + ' .day:last').addClass(SELEND);
+    resetSelection();
+    if (!calendar_selected) {
+      $(year_cal_id + ' .day').addClass(SELECTED);
+      $(year_cal_id).addClass(SELECTED);
+
+      $(year_cal_id + ' .day:first').addClass(SELSTART);
+      $(year_cal_id + ' .day:last').addClass(SELEND);
+    }
+  } else {
+    // Switch current year to the selected year
+    // Redo the calendar
+    var selected_year = $(that).data('yc-year');
+    buildYearCalendar(selected_year);
   }
 
   updateSelectedDates();
