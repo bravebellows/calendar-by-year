@@ -53,6 +53,7 @@ table {
 
 th, td {
   padding: 1px;
+  transition: all 0.3s ease;
 }
 
 tbody td:first-child, tbody td:last-child {
