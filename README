@@ -1,2 +1,6 @@
 This JavaScript application generates a full year calendar and allows selection
-It is to be merged into the Page Drogher RoR application
+It was developed for adaption into the Page Drogher application (Process Servce Document Management)
+
+It is not stand-alone, but instead is intended to be included into a web app.
+
+It is up to you to make all the necessary callbacks and connections.
